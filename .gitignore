@@ -23,3 +23,5 @@
 hs_err_pid*
 ./client/.idea/misc.xml
 ./server/.idea/misc.xml
+client/.idea/misc.xml
+server/.idea/misc.xml
