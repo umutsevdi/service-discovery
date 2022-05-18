@@ -6,8 +6,9 @@ public class Main {
 
     public static enum ServiceType {
         CALCULATOR("calc"),
-        TO_JSON("json"),
-        DATE_TIME("date");
+        DNS_LOOKUP("dns_lookup"),
+        DATE_TIME("date"),
+        ENCRYPTOR("encryption");
 
         private String type;
 
@@ -38,12 +39,21 @@ public class Main {
                             executor = new EvaluateExpression();
                             break;
                         }
-                        case TO_JSON: {
-                            System.out.println("Starting ToJson Service");
+                        case DNS_LOOKUP: {
+                            System.out.println("Starting DNS Lookup Service");
+                            executor = new DNSLookup();
+
                             break;
                         }
                         case DATE_TIME: {
                             System.out.println("Starting DateTime Service");
+                            executor = new DateTime();
+
+                            break;
+                        }
+                        case ENCRYPTOR: {
+                            System.out.println("Starting Encryption Service");
+                            executor = new Encryptor();
 
                             break;
                         }
