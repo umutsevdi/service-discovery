@@ -7,7 +7,8 @@ public class Main {
     public static enum ServiceType {
         CALCULATOR("calc"),
         TO_JSON("json"),
-        DATE_TIME("date");
+        DATE_TIME("date"),
+        ENCRYPTOR("encryption");
 
         private String type;
 
@@ -45,6 +46,12 @@ public class Main {
                         case DATE_TIME: {
                             executor=new DateTime();
                             System.out.println("Starting DateTime Service");
+
+                            break;
+                        }
+                        case ENCRYPTOR: {
+                            executor = new Encryptor();
+                            System.out.println("Starting Encryption Service");
 
                             break;
                         }
