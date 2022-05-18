@@ -43,6 +43,7 @@ public class Main {
                             break;
                         }
                         case DATE_TIME: {
+                            executor=new DateTime();
                             System.out.println("Starting DateTime Service");
 
                             break;
