@@ -1,4 +1,3 @@
-import enums.ServiceTypes;
 import exception.TimeoutException;
 
 import java.io.DataInputStream;
@@ -21,19 +20,18 @@ public class ApplicationServer implements Runnable {
         try (ServerSocket server = new ServerSocket(port);) {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
-                     DataInputStream input = new DataInputStream(socket.getInputStream());
-                     DataOutputStream output = new DataOutputStream(socket.getOutputStream());
-                ) {
-                    String msg = input.readUTF(); // reading a message
+                        DataInputStream input = new DataInputStream(socket.getInputStream());
+                        DataOutputStream output = new DataOutputStream(socket.getOutputStream());) {
+                    String serverType = input.readUTF().split(" ")[1]; // reading a message
                     try {
-                        ServiceTypes type = ServiceTypes.valueOf(msg);
-                        udpServer.broadCast(type);
+                        String response = udpServer.broadcast(serverType);
+                        output.writeUTF(response); // resend it to the client
+
                     } catch (IllegalArgumentException e) {
                         output.writeUTF("InvalidRequest");
                     } catch (TimeoutException e) {
                         output.writeUTF("Timeout");
                     }
-                    output.writeUTF(msg); // resend it to the client
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
