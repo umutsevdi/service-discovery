@@ -7,18 +7,18 @@ import java.util.Scanner;
 import data.Address;
 
 public class Main {
-    private static String ADDRESS_NAME = "127.0.0.1";
-    private static int PORT = 8080;
 
     public static void main(String[] args) {
 
+        String ADDRESS_NAME = "127.0.0.1";
+        int PORT = 8080;
         Address address = new Address(ADDRESS_NAME, PORT);
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the server type:");
         String serverType = scanner.nextLine();
 
         try (
-                Socket socket = new Socket(InetAddress.getByName(address.getIp()), address.getPort());
+                Socket socket = new Socket(InetAddress.getByName(address.ip()), address.port());
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
             output.writeUTF("GET " + serverType);
@@ -30,7 +30,7 @@ public class Main {
             }
             String[] data = in.split(":");
             System.out.println("Received : { ip:" + data[0] + ", port:" + data[1] + " }");
-            address = new Address(data[0], Integer.valueOf(data[1]));
+            address = new Address(data[0], Integer.parseInt(data[1]));
         } catch (Exception e) {
             System.out.println("No response");
             scanner.close();
@@ -40,7 +40,7 @@ public class Main {
         System.out.println("Server type " + serverType + " was found, enter the message:");
         String message = scanner.nextLine();
         try (
-                Socket socket = new Socket(InetAddress.getByName(address.getIp()), address.getPort());
+                Socket socket = new Socket(InetAddress.getByName(address.ip()), address.port());
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
 

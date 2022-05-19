@@ -22,17 +22,18 @@ public class ApplicationServer implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("started: ApplicationServer at " + port);
         try (ServerSocket server = new ServerSocket(port);) {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
-                        DataInputStream input = new DataInputStream(socket.getInputStream());
-                        DataOutputStream output = new DataOutputStream(socket.getOutputStream());) {
+                     DataInputStream input = new DataInputStream(socket.getInputStream());
+                     DataOutputStream output = new DataOutputStream(socket.getOutputStream());) {
                     String serverType = input.readUTF().split(" ")[1]; // reading a message
                     try {
                         String code = udpServer.broadcast(serverType); // receive unique code corresponding to the
-                                                                       // request
+                        // request
                         Address address = udpServer.getResponseAsync(code, timeoutSecond); // check the code value after
-                                                                                           // 30 seconds
+                        // 30 seconds
                         output.writeUTF("OK " + address.ip() + ":" + address.port()); // resend it to the client
 
                     } catch (IllegalArgumentException e) {

@@ -1,6 +1,6 @@
-package com.company.executor;
+package executor;
 
-import com.company.exception.InvalidRequestException;
+import exception.InvalidRequestException;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;

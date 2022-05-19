@@ -1,4 +1,4 @@
-package com.company.executor;
+package executor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

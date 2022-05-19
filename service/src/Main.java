@@ -1,6 +1,4 @@
-package com.company;
-
-import com.company.executor.*;
+import executor.*;
 
 import java.net.SocketException;
 

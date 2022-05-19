@@ -1,8 +1,6 @@
-package com.company;
-
-import com.company.data.Address;
-import com.company.data.UDPRequest;
-import com.company.exception.InvalidRequestException;
+import data.Address;
+import data.UDPRequest;
+import exception.InvalidRequestException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

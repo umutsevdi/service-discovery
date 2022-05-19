@@ -30,6 +30,7 @@ public class UDPServer extends Thread {
      */
     @Override
     public void run() {
+        System.out.println("started: UDPServer at " + port);
         try (ServerSocket server = new ServerSocket(port)) {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
@@ -78,10 +79,9 @@ public class UDPServer extends Thread {
      */
     public String broadcast(String type) throws Exception {
         String host = "255.255.255.255"; //  broadcast address
-        String code =
-                Arrays.toString(Base64.getEncoder().encode((LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + type)
-                        .getBytes()));
-        System.out.println("code for the UDP Broadcast: " + code);
+        String code = Base64.getEncoder().encodeToString(
+                (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + type).getBytes());
+        System.out.println("UDP broadcast code: {" + code + "}4");
 
         String message = port + " " + code + " " + type;
         InetAddress adds = InetAddress.getByName(host);
@@ -106,7 +106,7 @@ public class UDPServer extends Thread {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, inetAddress, 4445);
         socket.send(packet);
         socket.close();
-        System.out.println("broadcast to " + inetAddress + ":4445, with message:" + message);
+        System.out.println("broadcast to " + inetAddress + ":4445, with message: {" + message + "}");
     }
 
     /**

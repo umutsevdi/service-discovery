@@ -1,4 +1,4 @@
-package com.company.exception;
+package exception;
 
 public class InvalidRequestException extends Exception {
     public InvalidRequestException() {

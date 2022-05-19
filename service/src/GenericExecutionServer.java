@@ -1,7 +1,5 @@
-package com.company;
-
-import com.company.exception.InvalidRequestException;
-import com.company.executor.Executor;
+import exception.InvalidRequestException;
+import executor.Executor;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
