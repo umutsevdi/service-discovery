@@ -2,25 +2,10 @@ package com.company;
 
 import com.company.executor.*;
 
+import java.net.SocketException;
+
 public class Main {
 
-    public enum ServiceType {
-        CALCULATOR("calc"),
-        DNS_LOOKUP("dns_lookup"),
-        DATE_TIME("date"),
-        ENCRYPTOR("encryption");
-
-        private final String type;
-
-        ServiceType(String type) {
-            this.type = type;
-        }
-
-        @Override
-        public String toString() {
-            return this.type;
-        }
-    }
 
     public static void main(String[] args) {
         int readArgs = 0;
@@ -37,7 +22,7 @@ public class Main {
                 if (readArgs == 2) {
                     port = Integer.parseInt(i);
                 } else {
-                    switch (ServiceType.valueOf(i)) {
+                    switch (Executor.ServiceType.valueOf(i)) {
                         case CALCULATOR:
                             System.out.println("Starting Calculator Service");
                             executor = new EvaluateExpression();
@@ -66,6 +51,12 @@ public class Main {
         if (port == 0 || executor == null) {
             return;
         }
-        new Thread(new GenericExecutorRunnable(port, executor)).start();
+        GenericExecuteServer appServer = new GenericExecuteServer(port, executor);
+        appServer.start();
+        try {
+            new Thread(new UDPResponseServer(appServer)).start();
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

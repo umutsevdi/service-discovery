@@ -10,19 +10,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * {@link GenericExecutorRunnable} is a Runnable that executes given class on any
+ * {@link GenericExecuteServer} is a Runnable that executes given class on any
  * request
  * Returns {@code OK} followed by the response upon success,
  * Returns {@code ERR} upon receiving {@link InvalidRequestException}
- *
- * {@author umutsevdi}
+ * <p>
+ * {@author umutsevdi, MetinUsta}
  */
-public class GenericExecutorRunnable implements Runnable {
+public class GenericExecuteServer extends Thread {
 
     private final int port;
     private final Executor serviceImpl;
 
-    public GenericExecutorRunnable(int port, Executor serviceImpl) {
+    public GenericExecuteServer(int port, Executor serviceImpl) {
         this.port = port;
         this.serviceImpl = serviceImpl;
     }
@@ -32,8 +32,8 @@ public class GenericExecutorRunnable implements Runnable {
         try (ServerSocket server = new ServerSocket(port)) {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
-                        DataInputStream input = new DataInputStream(socket.getInputStream());
-                        DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
+                     DataInputStream input = new DataInputStream(socket.getInputStream());
+                     DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
                     String msg = input.readUTF(); // reading a message
                     try {
                         String response = serviceImpl.execute(msg);
@@ -50,5 +50,17 @@ public class GenericExecutorRunnable implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public Executor getServiceImpl() {
+        return serviceImpl;
+    }
+
+    public int getLoad() {
+        return (int) (Math.random() * 100);
     }
 }
