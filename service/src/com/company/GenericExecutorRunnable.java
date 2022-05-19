@@ -1,18 +1,28 @@
 package com.company;
 
+import com.company.exception.InvalidRequestException;
+import com.company.executor.Executor;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class GeneralConnector implements Runnable {
+/**
+ * {@link GenericExecutorRunnable} is a Runnable that executes given class on any
+ * request
+ * Returns {@code OK} followed by the response upon success,
+ * Returns {@code ERR} upon receiving {@link InvalidRequestException}
+ *
+ * {@author umutsevdi}
+ */
+public class GenericExecutorRunnable implements Runnable {
 
     private final int port;
     private final Executor serviceImpl;
 
-
-    public GeneralConnector(int port, Executor serviceImpl) {
+    public GenericExecutorRunnable(int port, Executor serviceImpl) {
         this.port = port;
         this.serviceImpl = serviceImpl;
     }
@@ -23,17 +33,15 @@ public class GeneralConnector implements Runnable {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
                         DataInputStream input = new DataInputStream(socket.getInputStream());
-                        DataOutputStream output = new DataOutputStream(socket.getOutputStream())
-                ) {
+                        DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
                     String msg = input.readUTF(); // reading a message
                     try {
                         String response = serviceImpl.execute(msg);
-                        output.writeUTF(response);
-                        //                        switch
-                    } catch (IllegalArgumentException e) {
-                        output.writeUTF("InvalidRequest");
+                        output.writeUTF("OK " + response);
+                        // switch
+                    } catch (InvalidRequestException e) {
+                        output.writeUTF("ERR");
                     }
-                    output.writeUTF(msg); // resend it to the client
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

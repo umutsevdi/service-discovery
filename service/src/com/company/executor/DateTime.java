@@ -1,9 +1,9 @@
-package com.company;
+package com.company.executor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DateTime implements Executor{
+public class DateTime implements Executor {
     public DateTime() {
     }
 

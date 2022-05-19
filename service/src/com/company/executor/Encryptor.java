@@ -1,4 +1,6 @@
-package com.company;
+package com.company.executor;
+
+import com.company.exception.InvalidRequestException;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -6,14 +8,13 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.spec.KeySpec;
 
-public class Encryptor implements Executor{
-
+public class Encryptor implements Executor {
 
     public Encryptor() {
     }
 
     @Override
-    public String execute(String args) {
+    public String execute(String args) throws InvalidRequestException {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             KeySpec spec = new PBEKeySpec(args.toCharArray(), args.getBytes(), 65536, 256);
@@ -21,7 +22,8 @@ public class Encryptor implements Executor{
                     .getEncoded(), "AES");
             return secret.toString();
         } catch (Exception e) {
-            return e.getMessage();
+            e.printStackTrace();
+            throw new InvalidRequestException();
         }
     }
 }

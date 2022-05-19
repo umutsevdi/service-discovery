@@ -1,4 +1,6 @@
-package com.company;
+package com.company.executor;
+
+import com.company.exception.InvalidRequestException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -9,14 +11,14 @@ public class EvaluateExpression implements Executor {
     }
 
     @Override
-    public String execute(String args) {
+    public String execute(String args) throws InvalidRequestException {
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("javascript");
         try {
             return (String) engine.eval(args);
         } catch (ScriptException ex) {
             ex.printStackTrace();
-            return ex.getMessage();
+            throw new InvalidRequestException();
         }
     }
 }
