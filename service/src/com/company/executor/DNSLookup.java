@@ -19,4 +19,9 @@ public class DNSLookup implements Executor {
             throw new InvalidRequestException();
         }
     }
+
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.DNS_LOOKUP;
+    }
 }

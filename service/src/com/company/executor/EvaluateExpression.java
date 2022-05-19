@@ -21,4 +21,9 @@ public class EvaluateExpression implements Executor {
             throw new InvalidRequestException();
         }
     }
+
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.CALCULATOR;
+    }
 }

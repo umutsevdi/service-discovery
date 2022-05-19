@@ -23,26 +23,26 @@ public class Main {
                     port = Integer.parseInt(i);
                 } else {
                     switch (Executor.ServiceType.valueOf(i)) {
-                        case CALCULATOR:
+                        case CALCULATOR -> {
                             System.out.println("Starting Calculator Service");
                             executor = new EvaluateExpression();
-                            break;
-                        case DNS_LOOKUP:
+                        }
+                        case DNS_LOOKUP -> {
                             System.out.println("Starting DNS Lookup Service");
                             executor = new DNSLookup();
-                            break;
-
-                        case DATE_TIME:
+                        }
+                        case DATE_TIME -> {
                             System.out.println("Starting DateTime Service");
                             executor = new DateTime();
-                            break;
-                        case ENCRYPTOR:
+                        }
+                        case ENCRYPTOR -> {
                             System.out.println("Starting Encryption Service");
                             executor = new Encryptor();
-                            break;
-                        default:
+                        }
+                        default -> {
                             System.out.println("Invalid Argument");
                             return;
+                        }
                     }
                 }
                 readArgs = 0;
@@ -51,10 +51,12 @@ public class Main {
         if (port == 0 || executor == null) {
             return;
         }
-        GenericExecuteServer appServer = new GenericExecuteServer(port, executor);
-        appServer.start();
+
         try {
-            new Thread(new UDPResponseServer(appServer)).start();
+            GenericExecutionServer appServer = new GenericExecutionServer(port, executor);
+            appServer.start();
+            UDPResponseServer udpResponseServer = new UDPResponseServer(appServer);
+            udpResponseServer.start();
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }

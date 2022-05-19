@@ -33,7 +33,7 @@ public class ApplicationServer implements Runnable {
                                                                        // request
                         Address address = udpServer.getResponseAsync(code, timeoutSecond); // check the code value after
                                                                                            // 30 seconds
-                        output.writeUTF("OK " + address.getIp() + ":" + address.getPort()); // resend it to the client
+                        output.writeUTF("OK " + address.ip() + ":" + address.port()); // resend it to the client
 
                     } catch (IllegalArgumentException e) {
                         output.writeUTF("ERR InvalidRequest");

@@ -12,6 +12,9 @@ public interface Executor {
      */
     String execute(String args) throws InvalidRequestException;
 
+    /**
+     * @return serviceType {@link ServiceType} of the Executor implementation
+     */
     ServiceType getServiceType();
 
     enum ServiceType {

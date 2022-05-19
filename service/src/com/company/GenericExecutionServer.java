@@ -10,22 +10,23 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * {@link GenericExecuteServer} is a Runnable that executes given class on any
+ * {@link GenericExecutionServer} is a Runnable that executes given class on any
  * request
  * Returns {@code OK} followed by the response upon success,
  * Returns {@code ERR} upon receiving {@link InvalidRequestException}
  * <p>
  * {@author umutsevdi, MetinUsta}
  */
-public class GenericExecuteServer extends Thread {
+public class GenericExecutionServer extends Thread {
 
     private final int port;
     private final Executor serviceImpl;
 
-    public GenericExecuteServer(int port, Executor serviceImpl) {
+    public GenericExecutionServer(int port, Executor serviceImpl) {
         this.port = port;
         this.serviceImpl = serviceImpl;
     }
+
 
     @Override
     public void run() {

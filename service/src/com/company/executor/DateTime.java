@@ -11,4 +11,9 @@ public class DateTime implements Executor {
     public String execute(String args) {
         return LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
     }
+
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.DATE_TIME;
+    }
 }

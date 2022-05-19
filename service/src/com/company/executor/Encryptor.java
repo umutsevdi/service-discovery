@@ -26,4 +26,9 @@ public class Encryptor implements Executor {
             throw new InvalidRequestException();
         }
     }
+
+    @Override
+    public ServiceType getServiceType() {
+        return ServiceType.ENCRYPTOR;
+    }
 }

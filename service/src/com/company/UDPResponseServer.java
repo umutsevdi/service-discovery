@@ -12,12 +12,12 @@ import java.util.Optional;
 /**
  * UDP Response Server receives UDP calls and responds them with the port of it's TCP Service
  */
-public class UDPResponseServer implements Runnable {
+public class UDPResponseServer extends Thread {
     private final DatagramSocket socket;
     private final byte[] buf = new byte[256];
-    private final GenericExecuteServer appServer;
+    private final GenericExecutionServer appServer;
 
-    public UDPResponseServer(GenericExecuteServer appServer) throws SocketException {
+    public UDPResponseServer(GenericExecutionServer appServer) throws SocketException {
         this.socket = new DatagramSocket(4445);
         this.appServer = appServer;
     }
@@ -33,35 +33,21 @@ public class UDPResponseServer implements Runnable {
                 socket.receive(packet);
                 InetAddress address = packet.getAddress();
                 String received = new String(packet.getData(), 0, packet.getLength());
+
                 UDPRequest request = resolveMessage(received);
-                Address tcpAddress = new Address(address, request.getPort());
+                Address tcpAddress = new Address(address, request.port());
 
-                Optional<String> response = generateTCPResponse(request);
+                Optional<String> response = generateTCPResponse(tcpAddress, request);
                 if (response.isPresent()) {
-                    respondWithTCP(tcpAddress, generateTCPResponse(request).get());
+                    respondWithTCP(tcpAddress, response.get());
                 }
-
             } catch (IOException e) {
-                e.printStackTrace(); // Exceptions related to IO
-            } catch (InvalidRequestException e) {
-                e.printStackTrace(); // ResolveMessageExceptions
+                e.printStackTrace();
+                throw new RuntimeException(e);
             } catch (Exception e) {
-                e.printStackTrace(); // TCP Sending Exceptions
+                System.out.println("Received request was invalid, ignored");
             }
         }
-    }
-
-    /**
-     * Generates a TCP message that contains port number and load
-     *
-     * @param request {@link UDPRequest}
-     * @return message if server type matches, null if otherwise
-     */
-    private Optional<String> generateTCPResponse(UDPRequest request) {
-        if (appServer.getServiceImpl().getServiceType().getName().equals(request.getType())) {
-            return Optional.of(appServer.getPort() + " " + appServer.getLoad());
-        }
-        return Optional.empty();
     }
 
     /**
@@ -84,6 +70,20 @@ public class UDPResponseServer implements Runnable {
     }
 
     /**
+     * Generates a TCP message that contains port number and load
+     * message format : "code ip:port load"
+     *
+     * @param request {@link UDPRequest}
+     * @return message if server type matches, null if otherwise
+     */
+    private Optional<String> generateTCPResponse(Address address, UDPRequest request) {
+        if (appServer.getServiceImpl().getServiceType().getName().equals(request.type())) {
+            return Optional.of(request.code() + " " + address.ip() + ":" + appServer.getPort() + " " + appServer.getLoad());
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Responds incoming UDP request with given message
      *
      * @param address Address values
@@ -91,7 +91,7 @@ public class UDPResponseServer implements Runnable {
      * @throws Exception Socket related exceptions
      */
     public void respondWithTCP(Address address, String message) throws Exception {
-        Socket socket = new Socket(address.getIp(), address.getPort());
+        Socket socket = new Socket(address.ip(), address.port());
         DataOutputStream output = new DataOutputStream(socket.getOutputStream());
         output.writeUTF(message);
     }
