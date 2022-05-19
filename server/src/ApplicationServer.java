@@ -1,3 +1,4 @@
+import exception.NoResponseException;
 import exception.TimeoutException;
 
 import java.io.DataInputStream;
@@ -6,13 +7,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import data.Address;
+
 public class ApplicationServer implements Runnable {
     private final int port;
+    private final int timeoutSecond;
     private final UDPServer udpServer;
 
     public ApplicationServer(int port, UDPServer udpServer) {
         this.port = port;
         this.udpServer = udpServer;
+        timeoutSecond = 30;
     }
 
     @Override
@@ -24,13 +29,18 @@ public class ApplicationServer implements Runnable {
                         DataOutputStream output = new DataOutputStream(socket.getOutputStream());) {
                     String serverType = input.readUTF().split(" ")[1]; // reading a message
                     try {
-                        String response = udpServer.broadcast(serverType);
-                        output.writeUTF(response); // resend it to the client
+                        String code = udpServer.broadcast(serverType); // receive unique code corresponding to the
+                                                                       // request
+                        Address address = udpServer.getResponseAsync(code, timeoutSecond); // check the code value after
+                                                                                           // 30 seconds
+                        output.writeUTF("OK " + address.getIp() + ":" + address.getPort()); // resend it to the client
 
                     } catch (IllegalArgumentException e) {
-                        output.writeUTF("InvalidRequest");
+                        output.writeUTF("ERR InvalidRequest");
                     } catch (TimeoutException e) {
-                        output.writeUTF("Timeout");
+                        output.writeUTF("ERR Timeout");
+                    } catch (NoResponseException e) {
+                        output.writeUTF("ERR NoResponse");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

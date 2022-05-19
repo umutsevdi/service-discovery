@@ -6,16 +6,27 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import data.Address;
+import data.ServerResponse;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import exception.NoResponseException;
 import exception.TimeoutException;
+
 public class UDPServer extends Thread {
     private DatagramSocket socket;
-    private Map<String,List<String> > request;
+    private Map<String, List<ServerResponse>> requests = new HashMap<String, List<ServerResponse>>();
 
     public UDPServer() {
         try {
@@ -54,28 +65,35 @@ public class UDPServer extends Thread {
     }
 
     public String broadcast(String type) throws Exception {
-        DatagramPacket sendPacket = new DatagramPacket(type.getBytes(), type.length(),
-                InetAddress.getByName("255.255.255.255"), 8088);
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-        while (interfaces.hasMoreElements()) {
-            NetworkInterface networkInterface = interfaces.nextElement();
+        String code = String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) + type;
+        InetAddress inetAddress = InetAddress.getByName("255.255.255.255");
+        socket = new DatagramSocket();
+        socket.setBroadcast(true);
+        String message = code + ":" + type;
+        byte[] buffer = message.getBytes();
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, inetAddress, 4445);
+        socket.send(packet);
+        socket.close();
+        System.out.println("broadcast to " + inetAddress.getAddress() + ":4445, with message:" + message);
+        return code;
+    }
 
-            if (networkInterface.isLoopback() || !networkInterface.isUp()) {
-                continue; // Don't want to broadcast to the loopback interface
-            }
+    public Address getResponseAsync(String code, int timeoutSecond) throws NoResponseException {
+        LocalDateTime then = LocalDateTime.now();
+        while (then.plusSeconds(timeoutSecond).isBefore(LocalDateTime.now())) {
 
-            for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-                InetAddress broadcast = interfaceAddress.getBroadcast();
-                if (broadcast == null) {
-                    continue;
-                }
-
-                // Send the broadcast package!
-                socket.send(sendPacket);
-
-                System.out.println(getClass().getName() + ">>> Request packet sent to: " + broadcast.getHostAddress()
-                        + "; Interface: " + networkInterface.getDisplayName());
-            }
         }
+        if (requests.containsKey(code) && requests.get(code).size() > 0) {
+            List<ServerResponse> responses = requests.get(code);
+            ServerResponse best = responses.get(0);
+            for (ServerResponse i : responses) {
+                if (best.getLoad() > i.getLoad()) {
+                    best = i;
+                }
+            }
+            requests.remove(code);
+            return best.getAddress();
+        }
+        throw new NoResponseException();
     }
 }
