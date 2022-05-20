@@ -32,7 +32,7 @@ public class Main {
             System.out.println("Received : { ip:" + data[0] + ", port:" + data[1] + " }");
             address = new Address(data[0], Integer.parseInt(data[1]));
         } catch (Exception e) {
-            System.out.println("No response");
+            System.out.println("No response: "+e.getMessage());
             scanner.close();
             return;
         }

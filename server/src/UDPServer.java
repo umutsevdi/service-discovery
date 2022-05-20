@@ -86,6 +86,7 @@ public class UDPServer extends Thread {
         String message = port + " " + code + " " + type;
         InetAddress adds = InetAddress.getByName(host);
 
+        requests.put(code, new ArrayList<>());
         sendBroadcastMessage(
                 message, adds
         );
@@ -117,9 +118,13 @@ public class UDPServer extends Thread {
      * @return Address: IP address and port values of the server
      * @throws NoResponseException: When no response is received while waiting
      */
-    public Address getResponseAsync(String code, int timeoutSecond) throws NoResponseException {
+    public Address getResponseAsync(String code, int timeoutSecond) throws NoResponseException, InterruptedException {
+        int counter = 25;
         LocalDateTime then = LocalDateTime.now();
-        while (then.plusSeconds(timeoutSecond).isBefore(LocalDateTime.now())) ;
+        while (then.plusSeconds(timeoutSecond).isBefore(LocalDateTime.now())) {
+            Thread.sleep(1000L);
+        }
+        System.out.println("Responses were collected, analyzing" + counter);
         if (requests.containsKey(code) && requests.get(code).size() > 0) {
             List<ServerResponse> responses = requests.get(code);
             ServerResponse best = responses.get(0);
@@ -128,9 +133,11 @@ public class UDPServer extends Thread {
                     best = i;
                 }
             }
+            System.out.println("best address found:"+best);
             requests.remove(code);
             return best.address();
         }
+        System.out.println("No response");
         throw new NoResponseException();
     }
 }
