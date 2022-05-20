@@ -120,10 +120,18 @@ public class UDPServer extends Thread {
      */
     public Address getResponseAsync(String code, int timeoutSecond) throws NoResponseException, InterruptedException {
         int counter = 25;
-        LocalDateTime then = LocalDateTime.now();
+        long then = System.currentTimeMillis();
+        while(true){
+            long now = System.currentTimeMillis();
+            if (now - then > 10000){
+                break;
+            }
+        }
+        /*
         while (then.plusSeconds(timeoutSecond).isBefore(LocalDateTime.now())) {
             Thread.sleep(1000L);
         }
+         */
         System.out.println("Responses were collected, analyzing" + counter);
         if (requests.containsKey(code) && requests.get(code).size() > 0) {
             List<ServerResponse> responses = requests.get(code);
