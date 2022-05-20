@@ -1,6 +1,7 @@
 import executor.*;
 
 import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class Main {
 
@@ -56,6 +57,8 @@ public class Main {
             UDPResponseServer udpResponseServer = new UDPResponseServer(appServer);
             udpResponseServer.start();
         } catch (SocketException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
     }

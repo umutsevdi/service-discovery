@@ -15,8 +15,8 @@ public class UDPResponseServer extends Thread {
     private final byte[] buf = new byte[256];
     private final GenericExecutionServer appServer;
 
-    public UDPResponseServer(GenericExecutionServer appServer) throws SocketException {
-        this.socket = new DatagramSocket(4445);
+    public UDPResponseServer(GenericExecutionServer appServer) throws SocketException, UnknownHostException {
+        this.socket = new DatagramSocket(4445,InetAddress.getByName("0.0.0.0"));
         this.appServer = appServer;
     }
 
@@ -29,6 +29,7 @@ public class UDPResponseServer extends Thread {
             try {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
+                System.out.println("Packet received : " + packet.toString());
                 InetAddress address = packet.getAddress();
                 String received = new String(packet.getData(), 0, packet.getLength());
 
@@ -36,6 +37,7 @@ public class UDPResponseServer extends Thread {
                 Address tcpAddress = new Address(address, request.port());
 
                 Optional<String> response = generateTCPResponse(tcpAddress, request);
+                System.out.println("response generated");
                 if (response.isPresent()) {
                     respondWithTCP(tcpAddress, response.get());
                 }
