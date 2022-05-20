@@ -38,6 +38,8 @@ public class Main {
                 System.out.println("Generated address: "+address);
             }else {
                 System.out.println("Invalid Format: " + rawData[1]);
+                scanner.close();
+                return;
             }
         } catch (Exception e) {
             System.out.println("No response: "+e.getMessage());

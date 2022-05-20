@@ -7,6 +7,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
+import java.util.Base64;
 
 public class Encryptor implements Executor {
 
@@ -16,11 +18,7 @@ public class Encryptor implements Executor {
     @Override
     public String execute(String args) throws InvalidRequestException {
         try {
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(args.toCharArray(), args.getBytes(), 65536, 256);
-            SecretKey secret = new SecretKeySpec(factory.generateSecret(spec)
-                    .getEncoded(), "AES");
-            return secret.toString();
+         return    Base64.getEncoder().encode(args.getBytes()).toString();
         } catch (Exception e) {
             e.printStackTrace();
             throw new InvalidRequestException();

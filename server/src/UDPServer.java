@@ -78,7 +78,7 @@ public class UDPServer extends Thread {
      * @return code the code to search asynchronously
      */
     public String broadcast(String type) throws Exception {
-        String host = "10.76.255.255"; //  broadcast address
+        String host = "255.255.255.255"; //  broadcast address
         String code = Base64.getEncoder().encodeToString(
                 (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + type).getBytes());
         System.out.println("UDP broadcast code: {" + code + "}4");
@@ -119,7 +119,6 @@ public class UDPServer extends Thread {
      * @throws NoResponseException: When no response is received while waiting
      */
     public Address getResponseAsync(String code, int timeoutSecond) throws NoResponseException, InterruptedException {
-        int counter = 25;
         long then = System.currentTimeMillis();
         while(true){
             long now = System.currentTimeMillis();
@@ -132,7 +131,7 @@ public class UDPServer extends Thread {
             Thread.sleep(1000L);
         }
          */
-        System.out.println("Responses were collected, analyzing" + counter);
+        System.out.println("Responses were collected, analyzing");
         if (requests.containsKey(code) && requests.get(code).size() > 0) {
             List<ServerResponse> responses = requests.get(code);
             ServerResponse best = responses.get(0);
