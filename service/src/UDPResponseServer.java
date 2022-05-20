@@ -8,7 +8,8 @@ import java.net.*;
 import java.util.Optional;
 
 /**
- * UDP Response Server receives UDP calls and responds them with the port of it's TCP Service
+ * UDP Response Server receives UDP calls and responds them with the port of
+ * it's TCP Service
  */
 public class UDPResponseServer extends Thread {
     private final DatagramSocket socket;
@@ -16,7 +17,7 @@ public class UDPResponseServer extends Thread {
     private final GenericExecutionServer appServer;
 
     public UDPResponseServer(GenericExecutionServer appServer) throws SocketException, UnknownHostException {
-        this.socket = new DatagramSocket(4445,InetAddress.getByName("0.0.0.0"));
+        this.socket = new DatagramSocket(4445, InetAddress.getByName("0.0.0.0"));
         this.appServer = appServer;
     }
 
@@ -29,14 +30,29 @@ public class UDPResponseServer extends Thread {
             try {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
+                InetAddress tcpResponseAddress = packet.getAddress();
+
+                // InetAddress tcpResponseAddress = InetAddress.getByName("192.168.137.85");
                 System.out.println("Packet received : " + packet.toString());
+                System.out.println(
+                        InetAddress.getLocalHost().getHostAddress() + " " + InetAddress
+                                .getLoopbackAddress() + " "
+                                + Inet4Address
+                                        .getLocalHost()
+                                + " " + Inet4Address.getLoopbackAddress());
                 InetAddress address = InetAddress.getLocalHost();
+                // InetAddress address = InetAddress.getByName("192.168.137.100");
                 String received = new String(packet.getData(), 0, packet.getLength());
 
                 UDPRequest request = resolveMessage(received);
-                Address tcpAddress = new Address(address, request.port());
+                System.out.println("udpRequest resolved:: " + request);
 
-                Optional<String> response = generateTCPResponse(tcpAddress, request);
+                Address tcpAddress = new Address(tcpResponseAddress, request.port());
+                Address localAddress = new Address(address, appServer.getPort());
+                System.out.println("from: " + localAddress + " to: " + tcpAddress + " preparing message");
+
+                Optional<String> response = generateTCPResponse(localAddress, request);
+                System.out.println("from: " + localAddress + " to: " + tcpAddress + " message: " + response.get());
                 System.out.println("response generated");
                 if (response.isPresent()) {
                     respondWithTCP(tcpAddress, response.get());
@@ -78,7 +94,8 @@ public class UDPResponseServer extends Thread {
      */
     private Optional<String> generateTCPResponse(Address address, UDPRequest request) {
         if (appServer.getServiceImpl().getServiceType().getName().equals(request.type())) {
-            return Optional.of(request.code() + " " + address.ip().getHostAddress() + ":" + appServer.getPort() + " " + appServer.getLoad());
+            return Optional.of(request.code() + " " + address.ip().getHostAddress() + ":" + appServer
+                    .getPort() + " " + appServer.getLoad());
         }
         return Optional.empty();
     }
@@ -91,6 +108,7 @@ public class UDPResponseServer extends Thread {
      * @throws Exception Socket related exceptions
      */
     public void respondWithTCP(Address address, String message) throws Exception {
+        System.out.println("responding with tcp :" + address + " with message : " + message);
         Socket socket = new Socket(address.ip(), address.port());
         DataOutputStream output = new DataOutputStream(socket.getOutputStream());
         output.writeUTF(message);
