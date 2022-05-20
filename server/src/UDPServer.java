@@ -78,7 +78,7 @@ public class UDPServer extends Thread {
      * @return code the code to search asynchronously
      */
     public String broadcast(String type) throws Exception {
-        String host = "255.255.255.255"; //  broadcast address
+        String host = "192.168.137.255"; //  broadcast address
         String code = Base64.getEncoder().encodeToString(
                 (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + type).getBytes());
         System.out.println("UDP broadcast code: {" + code + "}4");
