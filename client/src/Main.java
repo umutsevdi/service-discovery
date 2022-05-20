@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import data.Address;
@@ -28,9 +29,16 @@ public class Main {
                 System.out.println("Server type not found");
                 return;
             }
-            String[] data = in.split(":");
-            System.out.println("Received : { ip:" + data[0] + ", port:" + data[1] + " }");
-            address = new Address(data[0], Integer.parseInt(data[1]));
+            String[] rawData = in.split(" ");
+            System.out.println(Arrays.toString(rawData));
+            if(rawData[0].equals("OK")) {
+                String[] data = rawData[1].split(":");
+                System.out.println("Received : { ip:" + data[0] + ", port:" + data[1] + " }");
+                address = new Address(data[0], Integer.parseInt(data[1]));
+                System.out.println("Generated address: "+address);
+            }else {
+                System.out.println("Invalid Format: " + rawData[1]);
+            }
         } catch (Exception e) {
             System.out.println("No response: "+e.getMessage());
             scanner.close();
@@ -48,7 +56,7 @@ public class Main {
             System.out.println("Waiting for response...");
             System.out.println("Received:\n" + input.readUTF());
         } catch (Exception e) {
-            System.out.println("No response");
+            System.out.println("ANo response: "+ e.getMessage());
             scanner.close();
             return;
         }

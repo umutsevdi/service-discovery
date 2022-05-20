@@ -30,7 +30,7 @@ public class UDPResponseServer extends Thread {
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
                 System.out.println("Packet received : " + packet.toString());
-                InetAddress address = packet.getAddress();
+                InetAddress address = InetAddress.getLocalHost();
                 String received = new String(packet.getData(), 0, packet.getLength());
 
                 UDPRequest request = resolveMessage(received);
@@ -78,7 +78,7 @@ public class UDPResponseServer extends Thread {
      */
     private Optional<String> generateTCPResponse(Address address, UDPRequest request) {
         if (appServer.getServiceImpl().getServiceType().getName().equals(request.type())) {
-            return Optional.of(request.code() + " " + address.ip() + ":" + appServer.getPort() + " " + appServer.getLoad());
+            return Optional.of(request.code() + " " + address.ip().getHostAddress() + ":" + appServer.getPort() + " " + appServer.getLoad());
         }
         return Optional.empty();
     }

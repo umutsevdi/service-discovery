@@ -123,7 +123,7 @@ public class UDPServer extends Thread {
         long then = System.currentTimeMillis();
         while(true){
             long now = System.currentTimeMillis();
-            if (now - then > 10000){
+            if (now - then > 5000){
                 break;
             }
         }

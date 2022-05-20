@@ -34,12 +34,15 @@ public class GenericExecutionServer extends Thread {
                      DataInputStream input = new DataInputStream(socket.getInputStream());
                      DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
                     String msg = input.readUTF(); // reading a message
+                    System.out.println("Message from the client is received, message:"+ msg);
                     try {
                         String response = serviceImpl.execute(msg);
                         output.writeUTF("OK " + response);
+                        System.out.println("Responded successfully, "+ response);
                         // switch
                     } catch (InvalidRequestException e) {
                         output.writeUTF("ERR");
+                        System.out.println("Request format error, responded with ERR");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
