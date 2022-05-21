@@ -41,7 +41,7 @@ Within the scope of our project, we will implement a server that combines the Se
 Registry and the Load Balancer. However, instead of storing service provider addresses
 in a database-like system, we will use UDP broadcasting to discover them.
 
-<img align="center" src="doc/assets/system_architecture.png">
+<p align="center" ><img src="doc/assets/system_architecture.png"></p>
 
 <p id="system_architecture">
 
@@ -56,7 +56,7 @@ If the application services type matches the client's request,
 they respond to this message with their IP address, port number and a number
 corresponding to their busyness, using TCP.
 
-<img align="center" src="doc/assets/data1-min.gif" alt="data-animation">
+<p align="center"><img src="doc/assets/data1-min.gif" alt="data-animation" width=512px></p>
 
 The server waits until the timeout and saves all responses during that time.
 After the timeout, the server analyzes all responses and selects the best service.
@@ -64,7 +64,8 @@ Then sends its IP and port values to the client.
 
 After that, the service application and client communicate directly through TCP.
 
-<img align="center" src="doc/assets/data2-min.gif" alt="data-animation">
+<p align="center"><img src="doc/assets/data2-min.gif" alt="data-animation" width=512px></p>
+
 <p id="structure">
 
 ## 3- Structure
