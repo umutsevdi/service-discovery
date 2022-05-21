@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/umutsevdi/service-discovery">
-    <img src="https://cdn-icons.flaticon.com/png/512/1913/premium/1913653.png?token=exp=1653156537~hmac=534198d541fdea0bfe9a9babdf2694e1" alt="Logo" height="80"></a>
+    <img src="doc/assets/computer-networks.png" alt="Logo" height="80"></a>
 <h3 align="center"> Service Discovery and Load Balancing Service</h3>
 
 <p align="center"> Service Discovery & Load Balancing service implementation using UDP broadcasting and TCP 
