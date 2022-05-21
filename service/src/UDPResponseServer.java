@@ -8,8 +8,8 @@ import java.net.*;
 import java.util.Optional;
 
 /**
- * UDP Response Server receives UDP calls and responds them with the port of
- * it's TCP Service
+ * Receives UDP calls and responds them with the {@link Address} of it's
+ * {@link GenericExecutionServer}
  */
 public class UDPResponseServer extends Thread {
     private final DatagramSocket socket;
@@ -52,10 +52,10 @@ public class UDPResponseServer extends Thread {
                 System.out.println("from: " + localAddress + " to: " + tcpAddress + " preparing message");
 
                 Optional<String> response = generateTCPResponse(localAddress, request);
-                System.out.println("from: " + localAddress + " to: " + tcpAddress + " message: " + response.get());
-                System.out.println("response generated");
+                System.out.println("Response is generated: " + response.get());
                 if (response.isPresent()) {
                     respondWithTCP(tcpAddress, response.get());
+                    System.out.println("TCP Response was sent");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

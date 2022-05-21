@@ -9,6 +9,14 @@ import java.net.Socket;
 
 import data.Address;
 
+/**
+ * Application server is the server that communicates with the client and
+ * handles the task.
+ * Upon receiving a request, calls the {@link UDPServer#broadcast(String)} to
+ * send a broadcast
+ * message to all services nearby. After the timeout returns the best address
+ * available.
+ */
 public class ApplicationServer implements Runnable {
     private final int port;
     private final int timeoutSecond;
@@ -17,7 +25,7 @@ public class ApplicationServer implements Runnable {
     public ApplicationServer(int port, UDPServer udpServer) {
         this.port = port;
         this.udpServer = udpServer;
-        timeoutSecond = 30;
+        timeoutSecond = 5;
     }
 
     @Override
@@ -26,8 +34,8 @@ public class ApplicationServer implements Runnable {
         try (ServerSocket server = new ServerSocket(port);) {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
-                     DataInputStream input = new DataInputStream(socket.getInputStream());
-                     DataOutputStream output = new DataOutputStream(socket.getOutputStream());) {
+                        DataInputStream input = new DataInputStream(socket.getInputStream());
+                        DataOutputStream output = new DataOutputStream(socket.getOutputStream());) {
                     String serverType = input.readUTF().split(" ")[1]; // reading a message
                     try {
                         String code = udpServer.broadcast(serverType); // receive unique code corresponding to the

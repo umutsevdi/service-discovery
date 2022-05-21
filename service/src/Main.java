@@ -3,8 +3,16 @@ import executor.*;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+/**
+ * This program takes two arguments:
+ * --service: The service that will run
+ * --port: The port that the service run on
+ * Exits when either of them are invalid
+ * example:
+ * java --jar service.jar --port 8089 --service DNS_LOOKUP : Activates
+ * {@link DNSLookup} service
+ */
 public class Main {
-
 
     public static void main(String[] args) {
         int readArgs = 0;

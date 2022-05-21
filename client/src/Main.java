@@ -7,13 +7,15 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * Client sends TCP Request to the server to access the {@link Address} data of the wanted service.
+ * If there is an available service the address information is returned. Then the client directly connects
+ * to the service and sends the message.
+ */ 
 public class Main {
 
     public static void main(String[] args) {
-
-        String ADDRESS_NAME = "127.0.0.1";
-        int PORT = 8080;
-        Address address = new Address(ADDRESS_NAME, PORT);
+        Address address = new Address("127.0.0.1", 8080); // address of the server
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the server type:");
         String serverType = scanner.nextLine();
@@ -45,7 +47,7 @@ public class Main {
             scanner.close();
             return;
         }
-
+        // sending TCP request to the service
         System.out.println("Service type " + serverType + " exists, enter the message to send:");
         String message = scanner.nextLine();
         System.out.println("Sending message...");
@@ -55,7 +57,6 @@ public class Main {
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
             System.out.println("Message was sent");
             output.writeUTF(message);
-            System.out.println("Waiting for response...");
             System.out.println("Received:\n" + input.readUTF());
         } catch (Exception e) {
             System.out.println("Error: No response from service, " + e.getMessage());

@@ -8,12 +8,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * {@link GenericExecutionServer} is a Runnable that executes given class on any
+ * A thread that executes given service on any
  * request
  * Returns {@code OK} followed by the response upon success,
  * Returns {@code ERR} upon receiving {@link InvalidRequestException}
- * <p>
- * {@author umutsevdi, MetinUsta}
  */
 public class GenericExecutionServer extends Thread {
 
@@ -25,20 +23,19 @@ public class GenericExecutionServer extends Thread {
         this.serviceImpl = serviceImpl;
     }
 
-
     @Override
     public void run() {
         try (ServerSocket server = new ServerSocket(port)) {
             while (true) {
                 try (Socket socket = server.accept(); // a socket to interact with a new client
-                     DataInputStream input = new DataInputStream(socket.getInputStream());
-                     DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
+                        DataInputStream input = new DataInputStream(socket.getInputStream());
+                        DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
                     String msg = input.readUTF(); // reading a message
-                    System.out.println("Message from the client is received, message:"+ msg);
+                    System.out.println("Message from the client is received, message:" + msg);
                     try {
                         String response = serviceImpl.execute(msg);
                         output.writeUTF("OK " + response);
-                        System.out.println("Responded successfully, "+ response);
+                        System.out.println("Responded successfully, " + response);
                         // switch
                     } catch (InvalidRequestException e) {
                         output.writeUTF("ERR");
@@ -62,6 +59,10 @@ public class GenericExecutionServer extends Thread {
         return serviceImpl;
     }
 
+    /**
+     * getLoad returns a random number for test purposes.
+     * Normally it should return how busy the service is.
+     */
     public int getLoad() {
         return (int) (Math.random() * 100);
     }
