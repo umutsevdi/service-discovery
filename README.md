@@ -125,6 +125,34 @@ service-discovery/
 
 ## 4- Performance Analysis
 
+In this section, we examined our system's performance.
+
+It is hard to determine the efficiency of such a system with arithmetic
+calculations. Using UDP broadcasting to determine services may look like
+it's creating an overhead. However, it also provides speed since it doesn't
+spend time on database transactions and data synchronizations.
+
+It will also make adding new servers or removing existing ones easier.
+Adding new services will have little or no effect on the server's architecture.
+
+### 4.1- Alternative Scenerio
+
+When the system was initially designed, the server was also responsible for
+ the data transfer between the client and the service. Although this creates anonymity
+over service applications, it was also causing an increase in the response time.
+<p align="center"><img src="doc/assets/arch_alt.jpg" width="768px"></p>
+
+### 4.2- Revised System
+
+In our system, the server is responsible for both server discovery and load
+balancing. So adding data transfer would cause heavyweight. To reduce its
+load, we changed the way our system works. When the load balancer detects the
+services, it returns its address information to the client. Then client
+directly connects to those services. This way server can perform data
+transfers more efficiently.
+
+<p align="center"><img src="doc/assets/arch_final.jpg" width="768px"></p>
+
 <p id="screenshots">
 
 ## 5- Screenshots
